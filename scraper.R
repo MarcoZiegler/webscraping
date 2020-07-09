@@ -5,6 +5,11 @@
 # 30.06.2020#           #
 #########################
 
+# scenario:
+# "I wonder which manufacturer sells the most expensive guitars?"
+# lets scrape the guitars from thomann.de 
+# I like Paulas (a e-guitar model) - I so we will ckeck them out
+
 # libraries
 
   library(rvest)
@@ -18,7 +23,9 @@
 # first we prep the url a bit to iterate through all the guitars 
   url <- "https://www.thomann.de/de/lp-modelle.html?"
 
-# results per page 
+# results per page
+# we could also just scrape all results at once without iterating through pages in this case
+# this is deliberatly held complex to easily adapt the script to other websites
   rpp <- 25
 
 # check how many entries we get from our start-page
@@ -28,19 +35,19 @@
 #define how many pages we have to search
   surf <- ceiling(results_count / rpp)
 
-# setup pages to browsr through
+# setup pages to iterate through
   list_of_pages <- str_c(url, "pg=", 1:surf, "&ls=25")
 
 #a dataframe to bind them all! 
   masterframe <- data.frame()
 
-# iterate through the pages and scrape data
+# iterate through the pages and get the information we want
     for (page in list_of_pages) {
       
-      #take the information u need
+      #you are here:
       print(c("scraping page:",page))
   
-      #scraping the manufacturers
+      #scraping the manufacturers - check out the css tag on the page (right click: inspect element)
       manufacturers <-html_text(html_nodes(xml2::read_html(page),"#defaultResultPage .manufacturer"))
       print(length(manufacturers))
      
@@ -62,14 +69,14 @@
 
 # find the average price for a guitar by manufacturer
   table <-aggregate(masterframe$price ,by = list(masterframe$manufacturers),mean)
-
   names(table) <- c("manufacturer","average.price")
-
   table <-arrange(table, average.price)
 
 # make a little visualisation
-
   plot <- ggplot(data = table, aes(x = manufacturer, y = average.price)) +
     geom_bar(stat = "identity") +
+    ylab("average price (€)") +
     theme_bw() +
-    theme(axis.text.x = element_text(angle = 90)) 
+    theme(axis.text.x = element_text(angle = 90))
+    
+    
