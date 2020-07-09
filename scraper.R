@@ -8,7 +8,7 @@
 # scenario:
 # "I wonder which manufacturer sells the most expensive guitars?"
 # lets scrape the guitars from thomann.de 
-# I like Paulas (a e-guitar model) - I so we will ckeck them out
+# I like Paulas (e-guitar model) - I so we will ckeck them out
 
 # libraries
 
